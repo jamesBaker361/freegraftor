@@ -129,7 +129,7 @@ We sincerely thank [FireFlow](https://github.com/HolmesShuan/FireFlow-Fast-Inver
 If you find this code useful for your research, please consider citing:
 
 ```
-@article{yao2024freegraftor,
+@article{yao2025freegraftor,
   title={FreeGraftor: Training-Free Cross-Image Feature Grafting for Subject-Driven Text-to-Image Generation},
   author={Yao, Zebin and Ren, Lei and Jiang, Huixing and Wei, Chen and Wang, Xiaojie and Li, Ruifan and Feng, Fangxiang},
   journal={arXiv preprint arXiv:2504.15958},
