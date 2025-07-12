@@ -14,6 +14,8 @@ Zebin Yao, &nbsp; Lei Ren, &nbsp; Huixing Jiang, &nbsp; Chen Wei, &nbsp; Xiaojie
 ```bash
 git clone https://github.com/Nihukat/FreeGraftor.git
 cd FreeGraftor
+conda create -n freegraftor python==3.10.9
+conda activate freegraftor
 pip install -r requirements.txt
 ```
 
