@@ -220,9 +220,12 @@ class DoubleStreamBlock(nn.Module):
             
         if requires_inject:
             for ref_id, ref_img_modulated in enumerate(ref_img_modulateds):
-                src2tar_2d_xy, src2tar_match_mask, src2tar_1d = get_match(ref_img_modulated, img_modulated, sim_threshold=info['sim_threshold'], cyc_threshold=info['cyc_threshold'])
+                src2tar_2d_xy, src2tar_match_mask, src2tar_1d = get_match(ref_img_modulated, img_modulated, 
+                                                                          h_src=info['height'] // 16, w_src=info['width'] // 16,
+                                                                          h_tar=info['height'] // 16, w_tar=info['width'] // 16,
+                                                                          sim_threshold=info['sim_threshold'], cyc_threshold=info['cyc_threshold'])
                 img_ids = info['image_info']['img_ids'].to(img)
-                ref_img_ids = apply_match(src2tar_2d_xy, img_ids)
+                ref_img_ids = apply_match(src2tar_2d_xy, img_ids, h_tar=info['height'] // 16, w_tar=info['width'] // 16)
                 ref_img_pe = info['pe_embedder'](ref_img_ids)
                 
                 ref_mask = ref_masks[ref_id].to(img)
@@ -346,9 +349,12 @@ class SingleStreamBlock(nn.Module):
         if requires_inject:
             for ref_id, ref_img in enumerate(ref_imgs):
                 ref_img_mod = ref_img_mods[ref_id]
-                src2tar_2d_xy, src2tar_match_mask, src2tar_1d = get_match(ref_img_mod, img_mod, sim_threshold=info['sim_threshold'], cyc_threshold=info['cyc_threshold'])
+                src2tar_2d_xy, src2tar_match_mask, src2tar_1d = get_match(ref_img_mod, img_mod, 
+                                                                          h_src=info['height'] // 16, w_src=info['width'] // 16,
+                                                                          h_tar=info['height'] // 16, w_tar=info['width'] // 16,
+                                                                          sim_threshold=info['sim_threshold'], cyc_threshold=info['cyc_threshold'])
                 img_ids = info['image_info']['img_ids'].to(img)
-                ref_img_ids = apply_match(src2tar_2d_xy, img_ids)
+                ref_img_ids = apply_match(src2tar_2d_xy, img_ids, h_tar=info['height'] // 16, w_tar=info['width'] // 16)
                 ref_img_pe = info['pe_embedder'](ref_img_ids)            
                 
                 ref_mask = ref_masks[ref_id].to(img)
