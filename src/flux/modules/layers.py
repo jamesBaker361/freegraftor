@@ -5,7 +5,7 @@ import torch
 from einops import rearrange
 from torch import Tensor, nn
 
-from typing import List
+from typing import List,Union,Optional
 import copy
 
 from flux.math import attention, rope
@@ -113,7 +113,7 @@ class Modulation(nn.Module):
         self.multiplier = 6 if double else 3
         self.lin = nn.Linear(dim, self.multiplier * dim, bias=True)
 
-    def forward(self, vec: Tensor) -> tuple[ModulationOut, ModulationOut | None]:
+    def forward(self, vec: Tensor) -> tuple[ModulationOut,Optional[ModulationOut]]:
         out = self.lin(nn.functional.silu(vec))[:, None, :].chunk(self.multiplier, dim=-1)
 
         return (
