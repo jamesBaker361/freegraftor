@@ -207,8 +207,8 @@ class FreeGraftorPipeline:
         template_prompt: str = None,
         template_path: str = None,
         #output_dir: str = 'inference_results', 
-        clear_image_cache: bool = False,
-        clear_image_info_cache: bool = False,
+        #clear_image_cache: bool = False,
+        #clear_image_info_cache: bool = False,
         offload: bool = False,
         info = None,
         callback=None
@@ -226,12 +226,5 @@ class FreeGraftorPipeline:
         
         gen_image = self.final_generation(prompt, [collage_info], info, offload=offload, callback=lambda x,y: callback(x+info['num_steps']*2, y) if callback else None)
         
-        seed = info['seed']
-        #save_image(gen_image, output_dir, f"seed{seed}")
-        
-        if clear_image_cache:
-            shutil.rmtree(self.image_cache_dir)
-        if clear_image_info_cache:
-            shutil.rmtree(self.image_info_cache_dir)
             
         return gen_image
