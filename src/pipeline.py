@@ -20,6 +20,7 @@ from utils.load_and_save import load_image, save_image, load_image_info, save_im
 class ConceptConfig:
     class_name: str
     image_path: str
+    image: Image.Image
     scale: float = field(default=1.)
     x_bias: int = field(default=0)
     y_bias: int = field(default=0)
@@ -28,7 +29,7 @@ class ConceptConfig:
     alignment: str = field(default="center")
 
 class FreeGraftorPipeline:
-    def __init__(self, models=None, device="cuda", image_cache_dir='./image_cache', image_info_cache_dir='./image_info_cache'):
+    def __init__(self, models=None, device="cuda", image_cache_dir='./image_cache', image_info_cache_dir='./image_info_cache',torch_dtype=torch.float16):
         self.device = device
         if models is None:
             models = {}
@@ -88,7 +89,7 @@ class FreeGraftorPipeline:
         torch.cuda.empty_cache()
         
     @torch.inference_mode()
-    def generate_template(self, prompt: str, info, offload=False, callback=None):
+    def generate_template(self, prompt: str, info, offload=False, callback=None)->Image.Image:
         torch.manual_seed(info['seed'])
         init_noise = torch.randn((1, info['height'] * info['width'] // 256 , 64)).to(self.device).to(torch.bfloat16)
         x = torch.randn((1, 16, info['height'] // 8, info['width'] // 8)).to(self.device).to(torch.bfloat16)
@@ -108,12 +109,8 @@ class FreeGraftorPipeline:
         img = Image.fromarray((127.5 * (x + 1.0)).cpu().byte().numpy())
         return img 
         
-    def create_collage(self, prompt, concept_configs, info, template_path=None, offload=False, callback=None):
-        if template_path and Path(template_path).is_file():
-            template = Image.open(template_path).convert('RGB')
-        else:
-            template = self.generate_template(prompt, info, offload=offload, callback=callback)
-            template_path = save_image(template, self.image_cache_dir, suffix='template')
+    def create_collage(self, prompt, concept_configs, info, offload=False, callback=None)->tuple[Image.Image,torch.Tensor]:
+        template = self.generate_template(prompt, info, offload=offload, callback=callback)
             
         collage, collage_mask = self.collage_creator(template, concept_configs)
         
@@ -125,8 +122,8 @@ class FreeGraftorPipeline:
         return collage, collage_mask_tensor
     
     @torch.inference_mode()
-    def invert(self, image_path=None, pil_image=None, prompt="", info=None, offload=False, callback=None):
-        pil_image = load_image(image_path, pil_image)
+    def invert(self, pil_image=None, prompt="", info=None, offload=False, callback=None)->dict:
+        #pil_image = load_image(image_path, pil_image)
         x = self.encode_image(pil_image)
         inp_inv = prepare(self.t5, self.clip, x, prompt=prompt)
         timesteps = get_schedule(info['num_steps'], inp_inv["img"].shape[1], shift=True)
@@ -149,7 +146,7 @@ class FreeGraftorPipeline:
         return image_info
             
     @torch.inference_mode()
-    def encode_image(self, image):
+    def encode_image(self, image)->torch.Tensor:
         image_array = np.array(image)
         image = torch.from_numpy(image_array).permute(2, 0, 1).float() / 127.5 - 1
         image = image.unsqueeze(0) 
@@ -157,18 +154,20 @@ class FreeGraftorPipeline:
         image = self.ae.encode(image.to()).to(torch.bfloat16)
         return image    
     
+
+    
     @torch.inference_mode()
-    def invert_and_record(self, image_path=None, pil_image=None, info=None, offload=False, callback=None):
-        if image_path is None:
-            image_path = save_image(pil_image)
-        image_info = load_image_info(image_path, self.image_info_cache_dir)
-        if not (image_info and 'z' in image_info):
-            image_info = self.invert(image_path=image_path, prompt="", info=info, offload=offload, callback=callback)
-            save_image_info(image_info, image_path, self.image_info_cache_dir)
+    def invert_and_record(self, pil_image:Image.Image, info=None, offload=False, callback=None)->dict:
+        '''if image_path is None:
+            image_path = save_image(pil_image)'''
+        #image_info = load_image_info(image_path, self.image_info_cache_dir)
+        #if not (image_info and 'z' in image_info):
+        image_info = self.invert(pil_image=pil_image, prompt="", info=info, offload=offload, callback=callback)
+            #save_image_info(image_info, image_path, self.image_info_cache_dir)
         return image_info
     
     @torch.inference_mode()
-    def final_generation(self, prompt, all_image_info, info, offload=False, callback=None):
+    def final_generation(self, prompt, all_image_info, info, offload=False, callback=None)->Image.Image:
         for image_info in all_image_info:
             for key, value in image_info.items():
                 if 't_' in key:
@@ -207,28 +206,28 @@ class FreeGraftorPipeline:
         prompt: str,
         template_prompt: str = None,
         template_path: str = None,
-        output_dir: str = 'inference_results', 
+        #output_dir: str = 'inference_results', 
         clear_image_cache: bool = False,
         clear_image_info_cache: bool = False,
         offload: bool = False,
         info = None,
         callback=None
     ):
-        Path(output_dir).mkdir(exist_ok=True, parents=True)
+        #Path(output_dir).mkdir(exist_ok=True, parents=True)
         
         if not template_prompt:
             template_prompt = prompt
         
         collage, collage_mask_tensor = self.create_collage(template_prompt, concept_configs, info, template_path, offload=offload, callback=callback)
-        collage_path = save_image(collage, self.image_cache_dir, "collage")
+        #collage_path = save_image(collage, self.image_cache_dir, "collage")
         
-        collage_info = self.invert_and_record(image_path=collage_path, info=info, offload=offload, callback=lambda x,y: callback(x+info['num_steps'], y) if callback else None)
+        collage_info = self.invert_and_record(collage, info=info, offload=offload, callback=lambda x,y: callback(x+info['num_steps'], y) if callback else None)
         collage_info['mask'] = collage_mask_tensor.cpu()
         
         gen_image = self.final_generation(prompt, [collage_info], info, offload=offload, callback=lambda x,y: callback(x+info['num_steps']*2, y) if callback else None)
         
         seed = info['seed']
-        save_image(gen_image, output_dir, f"seed{seed}")
+        #save_image(gen_image, output_dir, f"seed{seed}")
         
         if clear_image_cache:
             shutil.rmtree(self.image_cache_dir)

@@ -241,30 +241,26 @@ class CollageCreator:
 
         return img3, mask3
     
-    def __call__(self, template, concept_configs):
+    def __call__(self, template, concept_configs)->tuple[Image.Image, Image.Image]:
         erasion_mask_array = np.zeros((template.size[1], template.size[0]), dtype=np.uint8)
         instance_count = defaultdict(int)
         all_image_info = []
         
         for config in concept_configs:
             instance_count[config.class_name] += 1
-            image_info = load_image_info(config.image_path, self.image_info_cache_dir, config.class_name)
-            if image_info:
-                all_image_info.append(image_info)
-            else:
-                image_info = {}
-                mask_list, bbox_list = self.segment(image_path=config.image_path, prompt=config.class_name)
-                mask = mask_list[0]
-                bbox = torch.tensor([int(m) for m in bbox_list[0]], dtype=torch.int32)
-                mask_raw = mask.squeeze(0).cpu()
-                image_info['mask_raw'] = mask_raw
-                mask = mask.unsqueeze(dim=0).to(dtype=torch.bfloat16, device='cuda')
-                mask = transforms.Resize((mask.shape[2]//16, mask.shape[3]//16))(mask)
-                mask = mask.flatten()  
-                image_info['mask'] = mask.cpu()
-                image_info['bbox'] = bbox.cpu()
-                save_image_info(image_info, config.image_path, self.image_info_cache_dir, config.class_name)
-                all_image_info.append(image_info)
+            image_info = {}
+            mask_list, bbox_list = self.segment(pil_image=config.image, prompt=config.class_name)
+            mask = mask_list[0]
+            bbox = torch.tensor([int(m) for m in bbox_list[0]], dtype=torch.int32)
+            mask_raw = mask.squeeze(0).cpu()
+            image_info['mask_raw'] = mask_raw
+            mask = mask.unsqueeze(dim=0).to(dtype=torch.bfloat16, device='cuda')
+            mask = transforms.Resize((mask.shape[2]//16, mask.shape[3]//16))(mask)
+            mask = mask.flatten()  
+            image_info['mask'] = mask.cpu()
+            image_info['bbox'] = bbox.cpu()
+            #save_image_info(image_info, config.image_path, self.image_info_cache_dir, config.class_name)
+            all_image_info.append(image_info)
             
         detections = {}
         for class_name, n_objs in instance_count.items():
@@ -287,7 +283,7 @@ class CollageCreator:
         erasion_mask = Image.fromarray(erasion_mask_array*255).convert('L')
         
         template_erased = self.erase(pil_image=template, pil_mask=erasion_mask)
-        save_image(template_erased, self.image_cache_dir, suffix='erased')
+        #save_image(template_erased, self.image_cache_dir, suffix='erased')
         
         template_mask = Image.new('L', template_erased.size, color='black')
         template_pasted = template_erased
