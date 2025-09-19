@@ -7,6 +7,7 @@ from einops import rearrange
 from huggingface_hub import hf_hub_download
 from imwatermark import WatermarkEncoder
 from safetensors.torch import load_file as load_sft
+from typing import Union,Optional
 
 from flux.model import Flux, FluxParams
 from flux.modules.autoencoder import AutoEncoder, AutoEncoderParams
@@ -18,11 +19,11 @@ from flux.sampling import unpack
 class ModelSpec:
     params: FluxParams
     ae_params: AutoEncoderParams
-    ckpt_path: str | None
-    ae_path: str | None
-    repo_id: str | None
-    repo_flow: str | None
-    repo_ae: str | None
+    ckpt_path: Optional[str] = None
+    ae_path: Optional[str] = None
+    repo_id: Optional[str] = None
+    repo_flow: Optional[str] = None
+    repo_ae: Optional[str] = None
 
 configs = {
     "flux-dev": ModelSpec(
@@ -71,7 +72,7 @@ def print_load_warning(missing: list[str], unexpected: list[str]) -> None:
         print(f"Got {len(unexpected)} unexpected keys:\n\t" + "\n\t".join(unexpected))
 
 
-def load_flow_model(name: str, device: str | torch.device = "cuda", hf_download: bool = True):
+def load_flow_model(name: str, device: Union[str, torch.device]="cuda", hf_download: bool = True):
     # Loading Flux
     print("Init model")
     
@@ -96,16 +97,16 @@ def load_flow_model(name: str, device: str | torch.device = "cuda", hf_download:
     return model
 
 
-def load_t5(name: str, device: str | torch.device = "cuda", max_length: int = 512) -> HFEmbedder:
+def load_t5(name: str, device: Union[str, torch.device]="cuda", max_length: int = 512) -> HFEmbedder:
     # max length 64, 128, 256 and 512 should work (if your sequence is short enough)
     return HFEmbedder(name, max_length=max_length, is_clip=False, torch_dtype=torch.bfloat16).to(device)
 
 
-def load_clip(name: str, device: str | torch.device = "cuda") -> HFEmbedder:
+def load_clip(name: str, device: Union[str, torch.device]="cuda") -> HFEmbedder:
     return HFEmbedder(name, max_length=77, is_clip=True, torch_dtype=torch.bfloat16).to(device)
 
 
-def load_ae(name: str, device: str | torch.device = "cuda", hf_download: bool = True) -> AutoEncoder:
+def load_ae(name: str, device: Union[str, torch.device]="cuda", hf_download: bool = True) -> AutoEncoder:
     ckpt_path = configs[name].ae_path
     if (
         ckpt_path is None

@@ -1,5 +1,5 @@
 import math
-from typing import Callable, List
+from typing import Callable, List,Union
 
 import torch
 from einops import rearrange, repeat
@@ -11,7 +11,7 @@ from .modules.conditioner import HFEmbedder
 from tqdm import tqdm
 
 
-def prepare(t5: HFEmbedder, clip: HFEmbedder, img: Tensor, prompt: str | list[str]) -> dict[str, Tensor]:
+def prepare(t5: HFEmbedder, clip: HFEmbedder, img: Tensor, prompt: Union[str,list[str]]) -> dict[str, Tensor]:
     bs, c, h, w = img.shape
     if bs == 1 and not isinstance(prompt, str):
         bs = len(prompt)
