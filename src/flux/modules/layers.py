@@ -268,7 +268,7 @@ class SingleStreamBlock(nn.Module):
         hidden_size: int,
         num_heads: int,
         mlp_ratio: float = 4.0,
-        qk_scale: float | None = None,
+        qk_scale: Optional[float] = None,
     ):
         super().__init__()
         self.hidden_dim = hidden_size
