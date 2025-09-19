@@ -9,6 +9,9 @@ import numpy as np
 import torch
 from torchvision import transforms
 
+import datasets.data_files
+datasets.data_files.get_metadata_patterns =None
+
 from segment_anything import sam_model_registry, SamPredictor
 from modelscope.outputs import OutputKeys
 from modelscope.pipelines import pipeline
