@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List,Optional
 import torch
 from torch import Tensor, nn
 
@@ -82,12 +82,12 @@ class Flux(nn.Module):
         txt_ids: Tensor,
         timesteps: Tensor,
         y: Tensor,
-        guidance: Tensor | None = None,
+        guidance: Optional[Tensor] = None,
         ref_imgs: List[Tensor] = None, 
         ref_masks: List[Tensor] = None,
         ref_txts: List[Tensor] = None,
         ref_ys: List[Tensor] = None,
-        ref_guidance: Tensor | None = None,
+        ref_guidance: Optional[Tensor] = None,
         info = None,
     ) -> List[Tensor]:
         if img.ndim != 3 or txt.ndim != 3:
