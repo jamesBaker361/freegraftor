@@ -13,6 +13,10 @@ import datasets.data_files
 datasets.data_files.get_metadata_patterns =None
 datasets.load.HubDatasetModuleFactoryWithoutScript=None
 datasets.load.HubDatasetModuleFactoryWithScript=None
+datasets.load.LocalDatasetModuleFactoryWithoutScript=None
+datasets.load.LocalDatasetModuleFactoryWithScript=None
+datasets.load.PackagedDatasetModuleFactory=None
+
 import modelscope
 modelscope.msdatasets.MsDataset=None
 modelscope.msdatasets.ms_dataset.MsDataset=None
