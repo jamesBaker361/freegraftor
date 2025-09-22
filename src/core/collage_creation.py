@@ -15,6 +15,7 @@ datasets.load.HubDatasetModuleFactoryWithoutScript=None
 datasets.load.HubDatasetModuleFactoryWithScript=None
 import modelscope
 modelscope.msdatasets.MsDataset=None
+modelscope.msdatasets.ms_dataset.MsDataset=None
 
 from segment_anything import sam_model_registry, SamPredictor
 from modelscope.outputs import OutputKeys
