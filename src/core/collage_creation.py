@@ -16,6 +16,12 @@ datasets.load.HubDatasetModuleFactoryWithScript=None
 datasets.load.LocalDatasetModuleFactoryWithoutScript=None
 datasets.load.LocalDatasetModuleFactoryWithScript=None
 datasets.load.PackagedDatasetModuleFactory=None
+datasets.load.files_to_hash=None
+datasets.load._get_importable_file_path=None
+datasets.load.resolve_trust_remote_code=None
+datasets.load._create_importable_file=None
+datasets.load._load_importable_file=None
+datasets.load.init_dynamic_modules=None
 
 import modelscope
 modelscope.msdatasets.MsDataset=None
