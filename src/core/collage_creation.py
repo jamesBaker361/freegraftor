@@ -22,6 +22,7 @@ datasets.load.resolve_trust_remote_code=None
 datasets.load._create_importable_file=None
 datasets.load._load_importable_file=None
 datasets.load.init_dynamic_modules=None
+datasets.utils.py_utils.get_imports=None
 
 import modelscope
 modelscope.msdatasets.MsDataset=None
