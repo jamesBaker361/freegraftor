@@ -36,6 +36,7 @@ parser.add_argument('--offload', action='store_true')
 parser.add_argument('--start_seed', type=int, default=0)
 parser.add_argument('--width', type=int, default=256)
 parser.add_argument('--height', type=int, default=256)
+parser.add_argument("--object",type=str,default="character")
 
 def main(args):
     #ir_model=RM.load("ImageReward-v1.0")
@@ -94,7 +95,11 @@ def main(args):
         background_image=background_dict[prompt]
         image=row["image"]
 
-        concept_configs=[ConceptConfig(class_name="character",image=image)]
+        object=args.object
+        if "object" in row:
+            object=row["object"]
+
+        concept_configs=[ConceptConfig(class_name=object,image=image)]
 
         augmented_image = pipeline(
             concept_configs=concept_configs,
