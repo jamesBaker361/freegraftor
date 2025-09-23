@@ -21,8 +21,8 @@ from utils.load_and_save import load_image, save_image, load_image_info, save_im
 @dataclass
 class ConceptConfig:
     class_name: str
-    image_path: str
     image: Image.Image
+    image_path: str=field(default="")
     scale: float = field(default=1.)
     x_bias: int = field(default=0)
     y_bias: int = field(default=0)
