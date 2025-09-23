@@ -83,7 +83,7 @@ def main(args):
     info['cyc_threshold'] = args.cyc_threshold
     info['inject_match_dropout'] = args.inject_match_dropout
 
-    pipeline=FreeGraftorPipeline(device=device,torch_dtype=torch_dtype)
+    pipeline=FreeGraftorPipeline(device="cuda",torch_dtype=torch_dtype)
 
 
     for k,row in enumerate(data):
