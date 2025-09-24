@@ -207,7 +207,7 @@ class FreeGraftorPipeline:
         concept_configs: List[ConceptConfig],
         prompt: str,
         template_prompt: str = None,
-        template_path: str = None,
+        #template_path: str = None,
         #output_dir: str = 'inference_results', 
         #clear_image_cache: bool = False,
         #clear_image_info_cache: bool = False,

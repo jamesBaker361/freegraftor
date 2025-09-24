@@ -114,8 +114,8 @@ def main(args):
         augmented_image = pipeline(
             concept_configs=concept_configs,
             prompt=prompt,
-            template_prompt=args.template_prompt,
-            template_path=args.template_path,
+            template_prompt=object,
+            #template_path=args.template_path,
             #output_dir=args.output_dir,
             #clear_image_cache=args.clear_image_cache,
             #clear_image_info_cache=args.clear_image_info_cache,
