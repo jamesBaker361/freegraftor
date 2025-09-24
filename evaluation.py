@@ -37,6 +37,7 @@ parser.add_argument('--start_seed', type=int, default=0)
 parser.add_argument('--width', type=int, default=256)
 parser.add_argument('--height', type=int, default=256)
 parser.add_argument("--object",type=str,default="character")
+parser.add_argument("--dest_dataset",type=str,default="jlbaker361/freegraftor")
 
 def main(args):
     #ir_model=RM.load("ImageReward-v1.0")
@@ -68,6 +69,15 @@ def main(args):
     image_score_background_list=[]
     #ir_score_list=[]
     dino_score_list=[]
+
+    output_dict={
+        "image":[],
+        "augmented_image":[],
+        "text_score":[],
+        "image_score":[],
+        "dino_score":[],
+        "prompt":[]
+    }
 
     info={}
 
@@ -143,6 +153,14 @@ def main(args):
         #ir_score_list.append(ir_score)
         dino_score_list.append(dino_score)
 
+        output_dict["augmented_image"].append(augmented_image)
+        output_dict["image"].append(image)
+        output_dict["dino_score"].append(dino_score)
+        output_dict["image_score"].append(image_score)
+        output_dict["text_score"].append(text_score)
+        output_dict["prompt"].append(prompt)
+
+
     accelerator.log({
         "text_score_list":np.mean(text_score_list),
         "image_score_list":np.mean(image_score_list),
@@ -150,6 +168,8 @@ def main(args):
         #"ir_score_list":np.mean(ir_score_list),
         "dino_score_list":np.mean(dino_score_list)
     })
+
+    Dataset.from_dict(output_dict).push_to_hub(args.dest_dataset)
 
 
 
