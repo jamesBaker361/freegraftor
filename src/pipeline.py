@@ -220,7 +220,7 @@ class FreeGraftorPipeline:
         if not template_prompt:
             template_prompt = prompt
         
-        collage, collage_mask_tensor = self.create_collage(template_prompt, concept_configs, info, template_path, offload=offload, callback=callback)
+        collage, collage_mask_tensor = self.create_collage(template_prompt, concept_configs, info, offload=offload, callback=callback)
         #collage_path = save_image(collage, self.image_cache_dir, "collage")
         
         collage_info = self.invert_and_record(collage, info=info, offload=offload, callback=lambda x,y: callback(x+info['num_steps'], y) if callback else None)
