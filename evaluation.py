@@ -162,6 +162,9 @@ def main(args):
         output_dict["text_score"].append(text_score)
         output_dict["prompt"].append(prompt)
 
+        for k,v in output_dict.items():
+            accelerator.print(k, type(v[0]))
+
 
     accelerator.log({
         "text_score_list":np.mean(text_score_list),
