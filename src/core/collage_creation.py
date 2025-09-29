@@ -313,7 +313,7 @@ class CollageCreator:
         template_pasted = template_erased
         for config, image_info in zip(concept_configs, all_image_info):
             tar_mask, tar_bbox = detections[config.class_name].popleft()
-            ref_image = Image.open(config.image_path).convert('RGB')
+            ref_image = config.image
             ref_mask = Image.fromarray(image_info['mask_raw'].numpy().astype('uint8')*255).convert('L')
             template_pasted, new_mask = self.paste_image(template_pasted, tar_mask, ref_image, ref_mask, 
                                                          scale=config.scale, x_bias=config.x_bias, y_bias=config.y_bias,
