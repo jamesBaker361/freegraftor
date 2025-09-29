@@ -162,6 +162,8 @@ def main(args):
         output_dict["text_score"].append(text_score)
         output_dict["prompt"].append(prompt)
 
+        accelerator.print(dino_score)
+
         for k,v in output_dict.items():
             accelerator.print(k, type(v[0]))
 
