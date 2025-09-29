@@ -25,8 +25,12 @@ datasets.load.init_dynamic_modules=None
 datasets.utils.py_utils.get_imports=None
 
 import modelscope
-modelscope.msdatasets.MsDataset=None
-modelscope.msdatasets.ms_dataset.MsDataset=None
+
+class MsDataset:
+    def __init__(self):
+        pass
+modelscope.msdatasets.MsDataset=MsDataset
+modelscope.msdatasets.ms_dataset.MsDataset=MsDataset
 
 from segment_anything import sam_model_registry, SamPredictor
 from modelscope.outputs import OutputKeys
