@@ -32,7 +32,7 @@ module load  CMake/3.29.3-GCCcore-13.3.0
 module load  CUDA/12.8.0  
 gcc --version
 source myenv/bin/activate
-export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:64
+export PYTORCH_CUDA_ALLOC_CONF="max_split_size_mb:64,expandable_segments:True"
 export TORCH_USE_CUDA_DSA="1"
 export CUDA_LAUNCH_BLOCKING="1"
 export TRANSFORMERS_CACHE="/umbc/ada/donengel/common/trans_cache"
