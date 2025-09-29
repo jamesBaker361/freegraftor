@@ -93,12 +93,13 @@ def main(args):
     info['sim_threshold'] = args.sim_threshold
     info['cyc_threshold'] = args.cyc_threshold
     info['inject_match_dropout'] = args.inject_match_dropout
-    info["image_info"]={"latents":{}}
+    
 
     pipeline=FreeGraftorPipeline(device="cuda",torch_dtype=torch_dtype)
 
 
     for k,row in enumerate(data):
+        info["image_info"]={"latents":{}}
         if k==args.limit:
             break
         
