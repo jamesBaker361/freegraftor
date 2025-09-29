@@ -93,7 +93,7 @@ def main(args):
     info['sim_threshold'] = args.sim_threshold
     info['cyc_threshold'] = args.cyc_threshold
     info['inject_match_dropout'] = args.inject_match_dropout
-    info["image_info"]=[]
+    info["image_info"]={}
 
     pipeline=FreeGraftorPipeline(device="cuda",torch_dtype=torch_dtype)
 
