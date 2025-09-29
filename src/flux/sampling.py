@@ -285,6 +285,10 @@ def denoise_fireflow(
         if inverse and store_latents:
             t = info['t']
             t_str = f't_{t:.4f}'
+            if t_str not in info["image_info"]["latents"]:
+                info['image_info']['latents'][t_str]={}
+            if 'ref_imgs' not in info['image_info']['latents'][t_str]:
+                info['image_info']['latents'][t_str]['ref_imgs'] = []
             if not isinstance(info['image_info']['latents'][t_str]['ref_imgs'], list):
                 info['image_info']['latents'][t_str]['ref_imgs'] = []            
             info['image_info']['latents'][t_str]['ref_imgs'].append(img.cpu())
