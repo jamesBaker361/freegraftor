@@ -147,7 +147,7 @@ def main(args):
         [_,text_score,__]=logits_per_text
         [_,image_score,image_score_background]=image_similarities
         #ir_score=ir_model.score(prompt,augmented_image)
-        dino_score=dino_metric.get_scores(image, [augmented_image])
+        dino_score=dino_metric.get_scores(image, [augmented_image])[0]
 
         text_score_list.append(text_score.detach().cpu().numpy())
         image_score_list.append(image_score)
