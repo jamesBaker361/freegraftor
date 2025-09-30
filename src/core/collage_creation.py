@@ -115,6 +115,9 @@ class CollageCreator:
         
         transformed_boxes = self.sam.transform.apply_boxes_torch(boxes, image.shape[:2]).to(self.device)
 
+        print("transofmred boxes",transformed_boxes.size())
+        print("boxes",boxes.size())
+
         try:
             masks, _, _ = self.sam.predict_torch(
                 point_coords=None,
