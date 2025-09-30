@@ -120,6 +120,10 @@ class CollageCreator:
             boxes=transformed_boxes,
             multimask_output=False
         )
+
+        print("masks",type(masks))
+        print("masks size",masks.size())
+        
         
         combined = sorted(zip(boxes, masks, scores), key=lambda x: -x[-1])
         mask_list = []
