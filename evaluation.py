@@ -16,6 +16,10 @@ from src.pipeline import FreeGraftorPipeline, ConceptConfig
 
 parser=argparse.ArgumentParser()
 
+os.environ['FLUX_DEV'] = 'black-forest-labs/FLUX.1-dev'
+os.environ['GROUNDING_DINO'] = 'IDEA-Research/grounding-dino-tiny'
+os.environ['SAM'] = './sam_vit_h_4b8939.pth'
+
 parser.add_argument("--mixed_precision",type=str,default="no")
 parser.add_argument("--model",type=str,default="person",help="person or object")
 parser.add_argument("--src_dataset",type=str, default="jlbaker361/mtg")
