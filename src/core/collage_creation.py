@@ -115,8 +115,6 @@ class CollageCreator:
         
         transformed_boxes = self.sam.transform.apply_boxes_torch(boxes, image.shape[:2]).to(self.device)
 
-        print("transofmred boxes",transformed_boxes.size())
-        print("boxes",boxes.size())
 
         try:
             masks, _, _ = self.sam.predict_torch(
@@ -125,20 +123,23 @@ class CollageCreator:
                 boxes=transformed_boxes,
                 multimask_output=False
             )
+
+            combined = sorted(zip(boxes, masks, scores), key=lambda x: -x[-1])
+            mask_list = []
+            box_list = []
+            
+            for item in combined:
+                box_list.append(item[0])
+                mask_list.append(item[1])
         except RuntimeError:
-            masks=torch.ones((1,1,image.shape[0],image.shape[1]))
+            mask_list=[torch.ones((1,image.shape[0],image.shape[1]))]
+            box_list=[torch.tensor([0,0,image.shape[0],image.shape[1]])]
 
         '''print("masks",type(masks))
         print("masks size",masks.size())'''
         
         
-        combined = sorted(zip(boxes, masks, scores), key=lambda x: -x[-1])
-        mask_list = []
-        box_list = []
         
-        for item in combined:
-            box_list.append(item[0])
-            mask_list.append(item[1])
             
         return mask_list, box_list
     
