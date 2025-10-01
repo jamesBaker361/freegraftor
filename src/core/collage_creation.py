@@ -132,6 +132,7 @@ class CollageCreator:
                 box_list.append(item[0])
                 mask_list.append(item[1])
         except RuntimeError:
+            print("couldmt segment")
             mask_list=[torch.ones((1,image.shape[0],image.shape[1]))]
             box_list=[torch.tensor([0,0,image.shape[0],image.shape[1]])]
 
